@@ -157,7 +157,7 @@ export const deleteFeedback = async (req, res) => {
             });
         }
 
-        await feedback.remove();
+        await Feedback.deleteOne({ _id: feedbackId });
 
         return res.status(200).json({
             success: true,
