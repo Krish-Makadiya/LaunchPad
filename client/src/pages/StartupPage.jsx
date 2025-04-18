@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+import CreatePitchForm from "../components/Homepage/CreatePitchForm";
+import PitchList from "../components/Homepage/Pitchlist";
 
 const navItems = [
     {
@@ -27,64 +30,158 @@ const navItems = [
     },
 ];
 
-const Dashboard = () => (
+const Dashboard = ({ loading, totalPitches, error }) => (
     <div className="p-8">
         <h2 className="text-2xl font-bold mb-6">Dashboard Overview</h2>
         <div className="grid grid-cols-3 gap-6 mb-8">
-            <div className="bg-violet-100 p-6 rounded-xl">
-                <h3 className="text-sm mb-2">Total Pitches</h3>
-                <p className="text-3xl font-bold">24</p>
-                <p className="text-sm text-gray-600">
-                    Active pitches this month
-                </p>
-            </div>
-
-            <div className="bg-blue-100 p-6 rounded-xl">
-                <h3 className="text-sm mb-2">Investor Views</h3>
-                <p className="text-3xl font-bold">347</p>
-                <p className="text-sm text-gray-600">Views this month</p>
-            </div>
-
-            <div className="bg-green-100 p-6 rounded-xl">
-                <h3 className="text-sm mb-2">Success Rate</h3>
-                <p className="text-3xl font-bold">74.86%</p>
-                <p className="text-sm text-gray-600">
-                    +6.04% greater than last month
-                </p>
-            </div>
-        </div>
-    </div>
-);
-
-const MyPitches = () => (
-    <div className="p-8">
-        <h2 className="text-2xl font-bold mb-6">My Pitches</h2>
-        <div className="bg-white rounded-xl shadow-sm">
-            {[1, 2, 3].map((pitch) => (
-                <div key={pitch} className="p-6 border-b border-gray-100">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <h3 className="font-semibold text-lg">
-                                Pitch Title #{pitch}
-                            </h3>
-                            <p className="text-gray-500">
-                                Tech Startup • Seed Stage
-                            </p>
+            {/* Total Pitches Card */}
+            <div className="rounded-[8px] px-5 py-4 hover:bg-[#292927] hover:text-[#fff] hover:scale-105 duration-200 shadow-[1px_2px_50px_0px_rgba(0,_0,_0,_0.1)] group">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 bg-black text-white rounded-full p-2 group-hover:bg-[#ffd60a] group-hover:text-black"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-.586-1.414l-4.5-4.5A2 2 0 0015.5 3H14m5 16v-2a2 2 0 00-2-2h-3"
+                    />
+                </svg>
+                <div className="mt-10">
+                    <p>Total Pitches</p>
+                    {loading ? (
+                        <div className="animate-pulse">
+                            <div className="h-12 bg-gray-200 rounded w-24 my-2"></div>
                         </div>
-                        <div className="flex space-x-2">
-                            <button className="px-4 py-2 bg-[#FFD60A] rounded-lg">
-                                Edit
-                            </button>
-                            <button className="px-4 py-2 bg-gray-100 rounded-lg">
-                                View Stats
-                            </button>
-                        </div>
-                    </div>
+                    ) : error ? (
+                        <p className="text-red-500 text-sm">
+                            Error loading data
+                        </p>
+                    ) : (
+                        <h3 className="text-5xl font-bold text-[#292927] mb-2 group-hover:text-[#fff] transition-colors duration-300">
+                            {totalPitches}
+                            <span className="text-[#ffd60a]">+</span>
+                        </h3>
+                    )}
                 </div>
-            ))}
+            </div>
+
+            {/* Investor Views Card */}
+            <div className="rounded-[8px] px-5 py-4 hover:bg-[#292927] hover:text-[#fff] hover:scale-105 duration-200 shadow-[1px_2px_50px_0px_rgba(0,_0,_0,_0.1)] group">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 bg-black text-white rounded-full p-2 group-hover:bg-[#ffd60a] group-hover:text-black"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                </svg>
+                <div className="mt-10">
+                    <p>Total Views</p>
+                    {loading ? (
+                        <div className="animate-pulse">
+                            <div className="h-12 bg-gray-200 rounded w-24 my-2">
+                                100
+                            </div>
+                        </div>
+                    ) : error ? (
+                        <p className="text-red-500 text-sm">
+                            Error loading data
+                        </p>
+                    ) : (
+                        <h3 className="text-5xl font-bold text-[#292927] mb-2 group-hover:text-[#fff] transition-colors duration-300">
+                            0<span className="text-[#ffd60a]">+</span>
+                        </h3>
+                    )}
+                </div>
+            </div>
+
+            {/* Success Rate Card */}
+            <div className="rounded-[8px] px-5 py-4 hover:bg-[#292927] hover:text-[#fff] hover:scale-105 duration-200 shadow-[1px_2px_50px_0px_rgba(0,_0,_0,_0.1)] group">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 bg-black text-white rounded-full p-2 group-hover:bg-[#ffd60a] group-hover:text-black"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
+                </svg>
+                <div className="mt-10">
+                    <p>Success Rate</p>
+                    {loading ? (
+                        <div className="animate-pulse">
+                            <div className="h-12 bg-gray-200 rounded w-24 my-2">
+                                11
+                            </div>
+                        </div>
+                    ) : error ? (
+                        <p className="text-red-500 text-sm">
+                            Error loading data
+                        </p>
+                    ) : (
+                        <h3 className="text-5xl font-bold text-[#292927] mb-2 group-hover:text-[#fff] transition-colors duration-300">
+                            0<span className="text-[#ffd60a]">%</span>
+                        </h3>
+                    )}
+                </div>
+            </div>
         </div>
     </div>
 );
+
+const MyPitches = () => {
+    const [showCreateForm, setShowCreateForm] = useState(false);
+
+    if (showCreateForm) {
+        return <CreatePitchForm onClose={() => setShowCreateForm(false)} />;
+    }
+
+    return (
+        <div className="p-8">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">My Pitches</h2>
+                <button
+                    onClick={() => setShowCreateForm(true)}
+                    className="px-4 py-2 bg-[#FFD60A] rounded-lg hover:bg-[#FFD60A]/90 flex items-center space-x-2">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 4v16m8-8H4"
+                        />
+                    </svg>
+                    <span>Create Pitch</span>
+                </button>
+            </div>
+
+            <PitchList />
+        </div>
+    );
+};
 
 const Messages = () => (
     <div className="p-8">
@@ -241,6 +338,9 @@ const Ideas = () => (
 function StartupPage() {
     const [selectedTab, setSelectedTab] = useState("Dashboard");
     const [date, setDate] = useState("");
+    const [totalPitches, setTotalPitches] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const updateDate = () => {
@@ -257,6 +357,43 @@ function StartupPage() {
         const timer = setInterval(updateDate, 1000);
 
         return () => clearInterval(timer);
+    }, []);
+
+    // Modify your Dashboard component to use the fetched data
+    useEffect(() => {
+        const fetchTotalPitches = async () => {
+            try {
+                setLoading(true);
+                const token = localStorage.getItem("token"); // Get token from localStorage
+
+                if (!token) {
+                    throw new Error("No authentication token found");
+                }
+
+                const response = await axios.get(
+                    "http://localhost:5000/startup/get-user-pitches",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                setTotalPitches(response.data.count);
+                setError(null);
+            } catch (err) {
+                console.error("Error fetching pitch count:", err);
+                setError(
+                    err.response?.data?.message || "Failed to fetch pitch count"
+                );
+                setTotalPitches(0);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTotalPitches();
     }, []);
 
     // Helper function to add ordinal suffix (1st, 2nd, 3rd, etc.)
@@ -277,7 +414,13 @@ function StartupPage() {
     const renderContent = () => {
         switch (selectedTab) {
             case "Dashboard":
-                return <Dashboard />;
+                return (
+                    <Dashboard
+                        loading={loading}
+                        totalPitches={totalPitches}
+                        error={error}
+                    />
+                );
             case "My Pitches":
                 return <MyPitches />;
             case "Messages":

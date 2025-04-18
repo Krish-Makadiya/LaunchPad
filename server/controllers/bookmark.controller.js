@@ -195,3 +195,128 @@ export const getUserBookmarks = async (req, res) => {
         });
     }
 };
+
+export const getBookmarkStats = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // 1. Get all pitches created by the user
+        const userPitches = await Pitch.find({ userId: userId }).select('_id');
+
+        // If user has no pitches, return 0
+        if (!userPitches.length) {
+            return res.status(200).json({
+                success: true,
+                totalBookmarks: 0,
+                message: "No pitches found for this user"
+            });
+        }
+
+        // 2. Get pitch IDs
+        const pitchIds = userPitches.map(pitch => pitch._id);
+
+        // 3. Count total bookmarks for all user's pitches combined
+        const totalBookmarks = await Bookmark.countDocuments({
+            pitchId: { $in: pitchIds }
+        });
+
+        return res.status(200).json({
+            success: true,
+            totalBookmarks
+        });
+
+    } catch (error) {
+        console.error('Error in getSimpleBookmarkStats:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error fetching bookmark count',
+            error: error.message
+        });
+    }
+};
+
+// Get bookmarks for a specific pitch
+export const getPitchBookmarkStats = async (req, res) => {
+    try {
+        const { pitchId } = req.params;
+        const userId = req.user.id;
+
+        // Verify pitch ownership
+        const pitch = await Pitch.findOne({
+            _id: pitchId,
+            userId: userId
+        });
+
+        if (!pitch) {
+            return res.status(404).json({
+                success: false,
+                message: "Pitch not found or unauthorized"
+            });
+        }
+
+        // Get bookmark statistics for the specific pitch
+        const bookmarkStats = await Bookmark.aggregate([
+            {
+                $match: {
+                    pitchId: new mongoose.Types.ObjectId(pitchId)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'investorDetails'
+                }
+            },
+            {
+                $group: {
+                    _id: '$pitchId',
+                    totalBookmarks: { $sum: 1 },
+                    investors: {
+                        $push: {
+                            investor: { $arrayElemAt: ['$investorDetails', 0] },
+                            bookmarkedAt: '$createdAt'
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    totalBookmarks: 1,
+                    investors: {
+                        $map: {
+                            input: '$investors',
+                            as: 'inv',
+                            in: {
+                                _id: '$$inv.investor._id',
+                                name: '$$inv.investor.name',
+                                email: '$$inv.investor.email',
+                                bookmarkedAt: '$$inv.bookmarkedAt'
+                            }
+                        }
+                    },
+                    lastBookmarked: { $max: '$investors.bookmarkedAt' }
+                }
+            }
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            pitchTitle: pitch.title,
+            bookmarkStats: bookmarkStats[0] || {
+                totalBookmarks: 0,
+                investors: [],
+                lastBookmarked: null
+            }
+        });
+
+    } catch (error) {
+        console.error('Error in getPitchBookmarkStats:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error fetching pitch bookmark statistics',
+            error: error.message
+        });
+    }
+};

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Pitch from "../models/Pitch.model.js";
 import User from "../models/User.model.js";
 
@@ -330,13 +331,13 @@ export const getUserPitches = async (req, res) => {
 export const getAllOtherPitches = async (req, res) => {
     try {
         const userId = req.user.uid; // Firebase UID from auth middleware
-        
+
         // Find the current user and validate
         const currentUser = await User.findOne({ firebaseUID: userId });
         if (!currentUser) {
             return res.status(404).json({
                 success: false,
-                message: "User not found"
+                message: "User not found",
             });
         }
 
@@ -344,30 +345,30 @@ export const getAllOtherPitches = async (req, res) => {
         if (currentUser.role !== "startup") {
             return res.status(403).json({
                 success: false,
-                message: "Access denied: Only startup users can view other pitches"
+                message:
+                    "Access denied: Only startup users can view other pitches",
             });
         }
 
         // Get all pitches except current user's, sorted by newest first
-        const pitches = await Pitch.find({ 
-            createdBy: { $ne: currentUser._id } // Exclude current user's pitches
+        const pitches = await Pitch.find({
+            createdBy: { $ne: currentUser._id }, // Exclude current user's pitches
         })
-        .populate('createdBy', 'name email profileImage') // Include creator's basic info
-        .sort({ createdAt: -1 }); // Newest first
+            .populate("createdBy", "name email profileImage") // Include creator's basic info
+            .sort({ createdAt: -1 }); // Newest first
 
         return res.status(200).json({
             success: true,
             message: "Pitches retrieved successfully",
             count: pitches.length,
-            pitches
+            pitches,
         });
-        
     } catch (error) {
         console.error("Error fetching pitches:", error);
         return res.status(500).json({
             success: false,
             message: "Error fetching pitches",
-            error: error.message
+            error: error.message,
         });
     }
 };
@@ -381,7 +382,7 @@ export const deletePitch = async (req, res) => {
         if (!pitchId) {
             return res.status(400).json({
                 success: false,
-                message: "Pitch ID is required"
+                message: "Pitch ID is required",
             });
         }
 
@@ -389,30 +390,30 @@ export const deletePitch = async (req, res) => {
         if (!currentUser) {
             return res.status(404).json({
                 success: false,
-                message: "User not found"
+                message: "User not found",
             });
         }
 
         if (currentUser.role !== "startup") {
             return res.status(403).json({
                 success: false,
-                message: "Access denied: Only startup users can delete pitches"
+                message: "Access denied: Only startup users can delete pitches",
             });
         }
 
         const pitch = await Pitch.findById(pitchId);
-        
+
         if (!pitch) {
             return res.status(404).json({
                 success: false,
-                message: "Pitch not found"
+                message: "Pitch not found",
             });
         }
 
         if (pitch.createdBy.toString() !== currentUser._id.toString()) {
             return res.status(403).json({
                 success: false,
-                message: "Access denied: You can only delete your own pitches"
+                message: "Access denied: You can only delete your own pitches",
             });
         }
 
@@ -420,23 +421,88 @@ export const deletePitch = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Pitch deleted successfully"
+            message: "Pitch deleted successfully",
         });
-
     } catch (error) {
         console.error("Error deleting pitch:", error);
-        
-        if (error.name === 'CastError') {
+
+        if (error.name === "CastError") {
             return res.status(400).json({
                 success: false,
-                message: "Invalid pitch ID format"
+                message: "Invalid pitch ID format",
             });
         }
 
         return res.status(500).json({
             success: false,
             message: "Error deleting pitch",
-            error: error.message
+            error: error.message,
+        });
+    }
+};
+
+export const getuserPitch = async (req, res) => {
+    try {
+        const { pitchId } = req.params; // Get pitch ID from URL params
+        const userId = req.user.id; // Get user ID from auth middleware
+
+        // Validate pitch ID format
+        if (!mongoose.Types.ObjectId.isValid(pitchId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid pitch ID format",
+            });
+        }
+
+        // Find pitch and populate necessary fields
+        const pitch = await Pitch.findOne({
+            _id: pitchId,
+            // createdBy: userId
+        }).populate([
+            {
+                path: "createdBy",
+                select: "name email profileImage", // Only select needed fields
+            }
+        ]);
+
+        // Check if pitch exists
+        if (!pitch) {
+            return res.status(404).json({
+                success: false,
+                message:
+                    "Pitch not found or you don't have permission to view it",
+            });
+        }
+
+        // Calculate additional statistics
+        const stats = {
+            totalBookmarks: pitch.bookmarks?.length || 0,
+            totalRatings: pitch.ratings?.length || 0,
+            averageRating:
+                pitch.ratings?.length > 0
+                    ? (
+                          pitch.ratings.reduce(
+                              (acc, curr) => acc + curr.rating,
+                              0
+                          ) / pitch.ratings.length
+                      ).toFixed(1)
+                    : 0,
+            totalFeedback: pitch.feedback?.length || 0,
+        };
+
+        return res.status(200).json({
+            success: true,
+            pitch: {
+                ...pitch.toObject(),
+                stats,
+            },
+        });
+    } catch (error) {
+        console.error("Error in getuserPitch:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching pitch details",
+            error: error.message,
         });
     }
 };

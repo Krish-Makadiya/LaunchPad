@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createPitch, deletePitch, editPitch, getAllOtherPitches, getUserPitches } from "../controllers/startup.controller.js";
+import { createPitch, deletePitch, editPitch, getAllOtherPitches, getuserPitch, getUserPitches } from "../controllers/startup.controller.js";
 import verifyToken from "../middlewares/verifyToken.js";
 
 
@@ -10,5 +10,6 @@ router.put("/edit-pitch/:id", verifyToken, editPitch);
 router.get("/get-user-pitches", verifyToken, getUserPitches);
 router.get("/get-other-pitches", verifyToken, getAllOtherPitches);
 router.delete('/delete-pitch/:id', verifyToken, deletePitch);
+router.get('/pitch/:pitchId', verifyToken, getuserPitch);
 
 export default router;
