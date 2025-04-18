@@ -361,7 +361,7 @@ export const getAllOtherPitches = async (req, res) => {
             count: pitches.length,
             pitches
         });
-
+        
     } catch (error) {
         console.error("Error fetching pitches:", error);
         return res.status(500).json({

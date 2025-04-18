@@ -5,7 +5,7 @@ import Navbar from "../components/Homepage/Navbar";
 const App = () => {
     return (
         <div className="relative">
-        <Navbar/>
+        <Navbar></Navbar>
             <div className="h-[80vh] w-[60vw] mx-auto flex flex-col justify-center items-center gap-10">
                 <div className="flex flex-col items-center gap-3">
                     <p className="text-[50px] font-[900] text-center font-[poppins]">
