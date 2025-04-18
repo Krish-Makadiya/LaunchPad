@@ -1,0 +1,60 @@
+# Root level
+.env
+.env.local
+.env.*.local
+.DS_Store
+logs
+*.log
+*.log.*
+
+# Node Modules
+**/node_modules/
+
+# Build output
+**/dist/
+**/build/
+
+# OS
+Thumbs.db
+
+# IDEs / Editor settings
+.vscode/
+.idea/
+
+# Firebase
+.firebase/
+firebase-debug.log
+.firebaserc
+firestore.indexes.json
+firestore.rules
+storage.rules
+firebase.json
+
+# /client (frontend)
+client/.next/
+client/out/
+client/.env
+client/.env.local
+client/.env.*.local
+
+# If using React or Vite
+client/build/
+
+# /server (backend)
+server/.env
+server/.env.local
+server/.env.*.local
+
+# Firebase Functions in server (if using)
+server/functions/node_modules/
+server/functions/lib/
+server/functions/.env
+server/functions/.env.local
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Firebase credentials
+**/launchpad-34d32-firebase-adminsdk*.json
