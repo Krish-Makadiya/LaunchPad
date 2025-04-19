@@ -1,13 +1,118 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import {
+    FaLinkedin,
+    FaTwitter,
+    FaGithub,
+    FaGlobe,
+    FaInstagram,
+} from "react-icons/fa";
+
+const FeedbackSection = ({ pitch }) => {
+    const [feedback, setFeedback] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem("token");
+            const res = await axios.post(
+                `http://localhost:5000/feedback/create-feedback/${pitch._id}`,
+                {
+                    content: feedback,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log(res);
+            setFeedback("");
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    return (
+        <div className="bg-white rounded-lg p-6 mt-3 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Give Feedback
+            </h3>
+            <form onSubmit={handleSubmit}>
+                <textarea
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    placeholder="Share your thoughts about this pitch..."
+                    className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent outline-none resize-none"
+                />
+                <div className="mt-4 flex justify-end">
+                    <button
+                        type="submit"
+                        disabled={loading || !feedback.trim()}
+                        className={`px-6 py-2 bg-[#FFD60A] text-gray-900 rounded-lg hover:bg-[#FFD60A]/90 transition-colors ${
+                            loading || !feedback.trim()
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                        }`}>
+                        {loading ? "Submitting..." : "Submit Feedback"}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+};
 
 export const PitchDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [pitch, setPitch] = useState(null);
+    const [feedback, setFeedback] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+
+    const SocialLinks = ({ socialLinks }) => {
+        if (!socialLinks) return null;
+
+        const getPlatformIcon = (url) => {
+            if (url.includes("linkedin"))
+                return (
+                    <FaLinkedin className="w-10 h-10 text-gray-500 hover:text-[#0077B5]" />
+                );
+            if (url.includes("instagram"))
+                return (
+                    <FaInstagram className="w-10 h-10 text-gray-500 hover:text-[#E4405F]" />
+                );
+            if (url.includes("twitter"))
+                return (
+                    <FaTwitter className="w-10 h-10 text-gray-500 hover:text-[#1DA1F2]" />
+                );
+            if (url.includes("github"))
+                return (
+                    <FaGithub className="w-10 h-10 text-gray-500 hover:text-[#333]" />
+                );
+            return (
+                <FaGlobe className="w-10 h-10 text-gray-500 hover:text-[#FFD60A]" />
+            );
+        };
+
+        return (
+            <div className="flex items-center space-x-4 mt-2">
+                {socialLinks.map((url, index) => (
+                    <a
+                        key={index}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="transition-colors duration-200">
+                        {getPlatformIcon(url)}
+                    </a>
+                ))}
+            </div>
+        );
+    };
 
     useEffect(() => {
         const fetchPitch = async () => {
@@ -45,6 +150,8 @@ export const PitchDetails = () => {
 
         fetchPitch();
     }, [id]);
+
+    console.log(pitch);
 
     if (loading) {
         return (
@@ -208,12 +315,8 @@ export const PitchDetails = () => {
                             </div>
                         </div>
 
-                        {/* Founder Information */}
-                        <div className="border-t pt-8">
-                            <h2 className="text-xl font-semibold mb-4">
-                                Founder Information
-                            </h2>
-                            <div className="flex items-center space-x-4">
+                        <div className="flex items-center justify-between space-x-4 border-t pt-8">
+                            <div className="flex items-center gap-3">
                                 <div className="w-16 h-16 bg-[#FFD60A] rounded-full flex items-center justify-center">
                                     <span className="text-2xl font-bold text-gray-900">
                                         {pitch.founderName.charAt(0)}
@@ -228,47 +331,12 @@ export const PitchDetails = () => {
                                     </p>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="border-t mt-8 pt-8 flex justify-end space-x-4">
-                            <button
-                                onClick={() =>
-                                    navigate(`/pitch/edit/${pitch._id}`)
-                                }
-                                className="px-6 py-2 bg-[#FFD60A] text-gray-900 rounded-lg hover:bg-[#FFD60A]/90">
-                                Edit Pitch
-                            </button>
-                            <button
-                                onClick={async () => {
-                                    if (
-                                        window.confirm(
-                                            "Are you sure you want to delete this pitch?"
-                                        )
-                                    ) {
-                                        try {
-                                            const token =
-                                                localStorage.getItem("token");
-                                            await axios.delete(
-                                                `http://localhost:5000/startup/delete-pitch/${pitch._id}`,
-                                                {
-                                                    headers: {
-                                                        Authorization: `Bearer ${token}`,
-                                                    },
-                                                }
-                                            );
-                                            navigate("/dashboard");
-                                        } catch (err) {
-                                            alert("Failed to delete pitch");
-                                        }
-                                    }
-                                }}
-                                className="px-6 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">
-                                Delete Pitch
-                            </button>
+                            <SocialLinks socialLinks={pitch.socialLinks} />
                         </div>
                     </div>
                 </div>
+
+                <FeedbackSection pitch={pitch} />
             </div>
         </div>
     );

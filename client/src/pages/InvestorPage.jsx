@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import CreatePitchForm from "../components/Homepage/CreatePitchForm";
 import PitchList from "../components/Homepage/Pitchlist";
+import { toast } from "react-hot-toast";
 
 const navItems = [
     {
@@ -13,7 +14,7 @@ const navItems = [
         icon: "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-.586-1.414l-4.5-4.5A2 2 0 0015.5 3H14m5 16v-2a2 2 0 00-2-2h-3",
     },
     {
-        name: "Messages",
+        name: "MyFeedbacks",
         icon: "M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z",
     },
     {
@@ -493,7 +494,7 @@ const Explore = () => {
                                     <div className="flex space-x-2">
                                         <button
                                             onClick={() =>
-                                                (window.location.href = `/pitch/${pitch._id}`)
+                                                (window.location.href = `/pitch/i/${pitch._id}`)
                                             }
                                             className="px-4 py-2 bg-[#FFD60A] text-gray-900 rounded-lg hover:bg-[#FFD60A]/90 transition-colors">
                                             View Details
@@ -555,31 +556,211 @@ const Explore = () => {
     );
 };
 
-const Messages = () => (
-    <div className="p-8">
-        <h2 className="text-2xl font-bold mb-6">Messages</h2>
-        <div className="bg-white rounded-xl shadow-sm">
-            {[1, 2, 3].map((message) => (
-                <div
-                    key={message}
-                    className="p-6 border-b border-gray-100 hover:bg-gray-50">
-                    <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
-                        <div>
-                            <h3 className="font-semibold">Investor Name</h3>
-                            <p className="text-gray-500">
-                                Latest message preview...
-                            </p>
-                        </div>
-                        <div className="ml-auto text-sm text-gray-400">
-                            2h ago
+const Messages = () => {
+    const [feedbacks, setFeedbacks] = useState([]);
+
+    const fetchFeedbacks = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const result = await axios.get(
+                "http://localhost:5000/feedback/get-user-feedback",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log(result.data.data);
+            setFeedbacks(result.data.data.feedback);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchFeedbacks();
+    }, []);
+
+    const deleteHandler = async (feedbackId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const result = await axios.delete(
+                `http://localhost:5000/feedback/delete-feedback/${feedbackId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            
+            // Update the pitches state to remove the deleted pitch
+            setPitches(prevPitches => prevPitches.filter(pitch => pitch._id !== feedbackId));
+            
+            // Show success message
+            toast.success("Pitch deleted successfully");
+        } catch (err) {
+            console.log(err);
+            toast.error("Failed to delete pitch");
+        }
+    };
+
+    return (
+        <div className="bg-white rounded-lg p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                Feedback
+            </h3>
+            <div className="space-y-6">
+                {feedbacks.map((feedback) => (
+                    <div
+                        key={feedback._id}
+                        className="p-4 border-b border-gray-100 last:border-b-0">
+                        <div className="flex items-start gap-4">
+                            {/* Investor Info */}
+                            <div className="flex-shrink-0">
+                                <img
+                                    src={feedback.investor.profileImage}
+                                    alt={feedback.investor.name}
+                                    className="w-12 h-12 rounded-full object-cover"
+                                />
+                            </div>
+
+                            {/* Content Section */}
+                            <div className="flex-1 min-w-0">
+                                {/* Header */}
+                                <div className="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h4 className="text-base font-normal text-gray-900">
+                                            {feedback.investor.name}
+                                        </h4>
+                                        <p className="text-sm text-gray-500">
+                                            {feedback.investor.email}
+                                        </p>
+                                    </div>
+                                    <span
+                                        className={`px-2.5 py-1 text-xs rounded-full ${
+                                            feedback.sentiment === "positive"
+                                                ? "bg-green-100 text-green-800"
+                                                : feedback.sentiment ===
+                                                  "negative"
+                                                ? "bg-red-100 text-red-800"
+                                                : "bg-gray-100 text-gray-800"
+                                        }`}>
+                                        {feedback.sentiment}
+                                    </span>
+                                </div>
+
+                                <p className=" text-black mb-2 text-[18px] font-[600]">
+                                    <span className="text-neutral-400 font-[500]">
+                                        Feedback:
+                                    </span>{" "}
+                                    {feedback.content}
+                                </p>
+
+                                {/* Pitch Info */}
+                                <div className="mb-3 p-4 bg-neutral-100 rounded-lg">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <h5 className="text-base font-normal text-gray-900 mb-1">
+                                                {feedback.pitch.startupName}
+                                            </h5>
+                                            <p className="text-sm text-gray-600">
+                                                {feedback.pitch.tagline}
+                                            </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <span
+                                                className={`px-3 py-1 text-sm rounded-full ${
+                                                    feedback.pitch.stage ===
+                                                    "Idea"
+                                                        ? "bg-blue-100 text-blue-800"
+                                                        : feedback.pitch
+                                                              .stage ===
+                                                          "Prototype"
+                                                        ? "bg-yellow-100 text-yellow-800"
+                                                        : feedback.pitch
+                                                              .stage ===
+                                                          "Early Revenue"
+                                                        ? "bg-green-100 text-green-800"
+                                                        : "bg-purple-100 text-purple-800"
+                                                }`}>
+                                                {feedback.pitch.stage}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 grid grid-cols-3 gap-3">
+                                        <div className="text-center p-2 bg-white rounded-lg">
+                                            <p className="text-xs text-gray-500">
+                                                Ask Amount
+                                            </p>
+                                            <p className="text-sm font-medium text-gray-900">
+                                                ₹
+                                                {feedback.pitch.askAmount?.toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <div className="text-center p-2 bg-white rounded-lg">
+                                            <p className="text-xs text-gray-500">
+                                                Equity
+                                            </p>
+                                            <p className="text-sm font-medium text-gray-900">
+                                                {feedback.pitch.askEquity}%
+                                            </p>
+                                        </div>
+                                        <div className="text-center p-2 bg-white rounded-lg">
+                                            <p className="text-xs text-gray-500">
+                                                Valuation
+                                            </p>
+                                            <p className="text-sm font-medium text-gray-900">
+                                                ₹
+                                                {feedback.pitch.companyValuation?.toLocaleString()}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 flex items-center justify-between text-sm">
+                                        <div className="text-gray-600">
+                                            {feedback.pitch.location}
+                                        </div>
+                                        <div className="text-gray-600">
+                                            {feedback.pitch.founderName}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Timestamp */}
+                                <div className="flex justify-between">
+                                    <p className="text-sm text-gray-500">
+                                        {new Date(
+                                            feedback.createdAt
+                                        ).toLocaleDateString()}
+                                    </p>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="h-5 w-5"
+                                        onClick={() =>
+                                            deleteHandler(feedback._id)
+                                        }>
+                                        <path d="M3 6h18" />
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                        <line x1="10" y1="11" x2="10" y2="17" />
+                                        <line x1="14" y1="11" x2="14" y2="17" />
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 const Bookmarks = () => {
     const [bookmarks, setBookmarks] = useState([]);
@@ -1335,7 +1516,7 @@ function InvestorPage() {
                 );
             case "Explore":
                 return <Explore />;
-            case "Messages":
+            case "MyFeedbacks":
                 return <Messages />;
             case "Bookmarks":
                 return <Bookmarks />;

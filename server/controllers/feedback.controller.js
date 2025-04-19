@@ -196,8 +196,8 @@ export const getUserFeedback = async (req, res) => {
 
         const feedback = await Feedback.find({ investor: user._id })
             .populate({
-                path: 'pitch',
-                select: 'startupName tagline'
+                path: 'pitch investor',
+                select: 'founderName stage location askAmount  askEquity companyValuation founderEmail startupName tagline email profileImage name role'
             })
             .sort({ createdAt: -1 });
 

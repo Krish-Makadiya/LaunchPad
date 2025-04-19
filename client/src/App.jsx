@@ -19,7 +19,8 @@ const App = () => {
             <Routes>
                 {/* Other routes */}
                 <Route path="/" element={<Homepage />} />
-                <Route path="/pitch/:id" element={<PitchDetails />} />
+                <Route path="/pitch/s/:id" element={<PitchDetails />} />
+                <Route path="/pitch/i/:id" element={<PitchDetails />} />
                 <Route path="/pitch/edit/:id" element={<EditPitchForm />} />
                 <Route path="/dashboard" element={<StartupPage />} />
                 <Route path="/inv" element={<InvestorPage/>} />
