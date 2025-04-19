@@ -1,4 +1,3 @@
-// server/controllers/idea.controller.js
 import Idea from "../models/idea.model.js";
 import mongoose from "mongoose";
 
