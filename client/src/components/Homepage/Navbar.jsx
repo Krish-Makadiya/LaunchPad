@@ -105,7 +105,7 @@ const Navbar = () => {
                     },
                 }
             );
-
+            console.log(response);
             updateRole(selectedRole);
             setShowRoleDialog(false);
         } catch (error) {

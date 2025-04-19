@@ -12,6 +12,7 @@ const router = Router();
 
 router.post("/create-bookmark/:pitchId", verifyToken, addBookmark);
 router.delete("/remove-bookmark/:pitchId", verifyToken, removeBookmark);
+router.get("/get-user-bookmarks", verifyToken, getUserBookmarks);
 router.get("/get-user-bookmark-stats", verifyToken, getBookmarkStats);
 router.get("/get-pitch-bookmark-stats", verifyToken, getPitchBookmarkStats);
 

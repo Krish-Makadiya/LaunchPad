@@ -7,6 +7,7 @@ import StartupPage from "./pages/StartupPage"
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PitchDetails } from "./components/Homepage/PitchDetails";
 import { EditPitchForm } from "./components/Homepage/EditPitchForm";
+import InvestorPage from "./pages/InvestorPage";
 
 const App = () => {
     return (
@@ -21,6 +22,7 @@ const App = () => {
                 <Route path="/pitch/:id" element={<PitchDetails />} />
                 <Route path="/pitch/edit/:id" element={<EditPitchForm />} />
                 <Route path="/dashboard" element={<StartupPage />} />
+                <Route path="/inv" element={<InvestorPage/>} />
             </Routes>
         </BrowserRouter>
         </div>

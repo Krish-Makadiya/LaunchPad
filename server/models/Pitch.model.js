@@ -79,6 +79,10 @@ const pitchSchema = new mongoose.Schema(
             type: Schema.Types.ObjectId,
             ref: "User",
         },
+        isBookmarked: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true }
 );

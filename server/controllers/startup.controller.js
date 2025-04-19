@@ -509,3 +509,26 @@ export const getuserPitch = async (req, res) => {
         });
     }
 };
+
+export const getAllPitches = async (req, res) => {
+    try {
+        // Get all active pitches sorted by latest first
+        const pitches = await Pitch.find()
+            .sort({ createdAt: -1 })
+            .populate('createdBy', 'name startupProfile')
+            .select('startupName tagline description sector stage askAmount askEquity createdAt isBookmarked');
+
+        return res.status(200).json({
+            success: true,
+            count: pitches.length,
+            pitches
+        });
+
+    } catch (error) {
+        console.error('Error in getAllPitches:', error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching pitches"
+        });
+    }
+};
