@@ -23,10 +23,10 @@ const PitchCard = ({ pitch }) => {
                     <div className="flex justify-between items-start">
                         <div className="space-y-2">
                             <h3 className="font-semibold text-xl text-gray-900">
-                                {updatedPitch.startupName}
+                                {pitch?.startupName ?? "Untitled"}
                             </h3>
                             <p className="text-gray-500 text-sm">
-                                {updatedPitch.tagline}
+                                {pitch?.tagline ?? "No tagline"}
                             </p>
                         </div>
                         <span
@@ -47,7 +47,7 @@ const PitchCard = ({ pitch }) => {
                         <div className="text-center p-3 bg-gray-50 rounded-lg">
                             <p className="text-sm text-gray-600">Ask Amount</p>
                             <p className="font-semibold text-gray-900">
-                                ₹{updatedPitch.askAmount.toLocaleString()}
+                                ₹{updatedPitch?.askAmount?.toLocaleString()}
                             </p>
                         </div>
                         <div className="text-center p-3 bg-gray-50 rounded-lg">
@@ -60,7 +60,7 @@ const PitchCard = ({ pitch }) => {
                             <p className="text-sm text-gray-600">Valuation</p>
                             <p className="font-semibold text-gray-900">
                                 ₹
-                                {updatedPitch.companyValuation.toLocaleString()}
+                                {updatedPitch?.companyValuation?.toLocaleString()}
                             </p>
                         </div>
                     </div>
@@ -69,7 +69,7 @@ const PitchCard = ({ pitch }) => {
                         <div className="flex items-center space-x-4">
                             <div className="w-10 h-10 bg-[#FFD60A] rounded-full flex items-center justify-center">
                                 <span className="font-semibold text-gray-900">
-                                    {updatedPitch.founderName.charAt(0)}
+                                    {updatedPitch?.founderName?.charAt(0)}
                                 </span>
                             </div>
                             <div>
@@ -121,9 +121,6 @@ const PitchList = () => {
                 setLoading(true);
                 const token = localStorage.getItem("token");
 
-                // Add console.log to debug token
-                console.log("Token:", token);
-
                 const response = await axios.get(
                     "http://localhost:5000/startup/get-user-pitches",
                     {
@@ -132,10 +129,7 @@ const PitchList = () => {
                             "Content-Type": "application/json",
                         },
                     }
-                );
-
-                console.log("API Response:", response.data);
-
+                );  
                 setPitches(response.data.pitches);
                 setError(null);
             } catch (err) {

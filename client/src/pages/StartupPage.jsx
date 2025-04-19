@@ -238,102 +238,494 @@ const Investors = () => (
     </div>
 );
 
-const MyProfile = () => (
-    <div className="p-8">
-        <h2 className="text-2xl font-bold mb-6">My Profile</h2>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center space-x-4 mb-6">
-                <div className="w-20 h-20 bg-gray-200 rounded-full"></div>
-                <div>
-                    <h3 className="text-xl font-semibold">John Doe</h3>
-                    <p className="text-gray-500">Startup Founder</p>
-                </div>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            className="mt-1 w-full p-2 border rounded-lg"
-                            value="john@example.com"
-                            readOnly
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Company
-                        </label>
-                        <input
-                            type="text"
-                            className="mt-1 w-full p-2 border rounded-lg"
-                            value="Tech Startup Inc."
-                            readOnly
-                        />
-                    </div>
-                </div>
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Location
-                        </label>
-                        <input
-                            type="text"
-                            className="mt-1 w-full p-2 border rounded-lg"
-                            value="San Francisco, CA"
-                            readOnly
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Industry
-                        </label>
-                        <input
-                            type="text"
-                            className="mt-1 w-full p-2 border rounded-lg"
-                            value="Technology"
-                            readOnly
-                        />
-                    </div>
-                </div>
-            </div>
-            <button className="mt-6 px-4 py-2 bg-[#FFD60A] rounded-lg font-medium">
-                Edit Profile
-            </button>
-        </div>
-    </div>
-);
+// client/src/pages/StartupPage.jsx
 
-const Ideas = () => (
-    <div className="p-8">
-        <h2 className="text-2xl font-bold mb-6">Startup Ideas</h2>
-        <div className="grid grid-cols-3 gap-6">
-            {[1, 2, 3].map((idea) => (
-                <div key={idea} className="bg-white p-6 rounded-xl shadow-sm">
-                    <div className="text-xl font-semibold mb-3">
-                        Idea #{idea}
+const MyProfile = () => {
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState(null);
+
+    useEffect(() => {
+        fetchUserProfile();
+    }, []);
+
+    const fetchUserProfile = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem("token");
+            const response = await axios.get(
+                "http://localhost:5000/auth/profile",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.data.success) {
+                setProfile(response.data.user);
+                setFormData(response.data.user); // Initialize form data with current profile
+            }
+        } catch (err) {
+            console.error("Error fetching profile:", err);
+            setError(err.response?.data?.message || "Failed to fetch profile");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="p-8">
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                    <div className="animate-pulse">
+                        <div className="flex items-center space-x-4 mb-6">
+                            <div className="w-20 h-20 bg-gray-200 rounded-full"></div>
+                            <div className="space-y-2">
+                                <div className="h-6 w-32 bg-gray-200 rounded"></div>
+                                <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-6">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="space-y-2">
+                                    <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                                    <div className="h-10 bg-gray-200 rounded"></div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <p className="text-gray-600 mb-4">
-                        Brief description of the startup idea goes here...
-                    </p>
-                    <div className="flex space-x-2">
-                        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                            Tech
-                        </span>
-                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                            SaaS
-                        </span>
-                    </div>
-                    <button className="mt-4 w-full py-2 bg-[#FFD60A] rounded-lg font-medium">
-                        Develop Idea
-                    </button>
                 </div>
-            ))}
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-8">
+                <div className="bg-red-50 text-red-500 p-4 rounded-lg">
+                    {error}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="p-8">
+            <h2 className="text-2xl font-bold mb-6">My Profile</h2>
+            <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center space-x-4 mb-6">
+                    <div className="w-20 h-20 bg-[#FFD60A] rounded-full flex items-center justify-center text-2xl font-bold">
+                        {profile?.name?.charAt(0)}
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-semibold">
+                            {profile?.name}
+                        </h3>
+                        <p className="text-gray-500">
+                            {profile?.role === "startup"
+                                ? "Startup Founder"
+                                : "Investor"}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Basic Information */}
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                className="mt-1 w-full p-2 border rounded-lg bg-gray-50"
+                                value={profile?.email}
+                                readOnly
+                            />
+                        </div>
+                    </div>
+
+                    {/* Additional Information */}
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Location
+                            </label>
+                            <input
+                                type="text"
+                                className="mt-1 w-full p-2 border rounded-lg bg-gray-50"
+                                value={"India"}
+                                readOnly
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-);
+    );
+};
+
+const Ideas = () => {
+    const [ideas, setIdeas] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedIdea, setSelectedIdea] = useState(null);
+
+    // Fetch ideas on component mount
+    useEffect(() => {
+        fetchIdeas();
+    }, []);
+
+    const fetchIdeas = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get(
+                "http://localhost:5000/ideas/all",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log(response);
+            setIdeas(response.data.ideas);
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to fetch ideas");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (ideaId) => {
+        if (window.confirm("Are you sure you want to delete this idea?")) {
+            try {
+                const token = localStorage.getItem("token");
+                await axios.delete(`http://localhost:5000/ideas/${ideaId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                // Refresh ideas list
+                fetchIdeas();
+            } catch (err) {
+                alert(err.response?.data?.message || "Failed to delete idea");
+            }
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="p-8">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold">Startup Ideas</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3].map((i) => (
+                        <div
+                            key={i}
+                            className="animate-pulse bg-white p-6 rounded-xl shadow-sm">
+                            <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+                            <div className="h-20 bg-gray-200 rounded mb-4"></div>
+                            <div className="flex space-x-2 mb-4">
+                                <div className="h-6 w-16 bg-gray-200 rounded-full"></div>
+                                <div className="h-6 w-16 bg-gray-200 rounded-full"></div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="p-8">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Startup Ideas</h2>
+                <button
+                    onClick={() => setShowAddModal(true)}
+                    className="px-4 py-2 bg-[#FFD60A] rounded-lg font-medium hover:bg-[#FFD60A]/90 flex items-center space-x-2">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path
+                            fillRule="evenodd"
+                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                    <span>Add New Idea</span>
+                </button>
+            </div>
+
+            {error && (
+                <div className="bg-red-50 text-red-500 p-4 rounded-lg mb-6">
+                    {error}
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {ideas.map((idea) => (
+                    <div
+                        key={idea._id}
+                        className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex justify-between items-start mb-3">
+                            <div className="text-xl font-semibold">
+                                {idea.title}
+                            </div>
+                            <div className="flex space-x-2">
+                                <button
+                                    onClick={() => {
+                                        setSelectedIdea(idea);
+                                        setShowEditModal(true);
+                                    }}
+                                    className="p-1.5 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(idea._id)}
+                                    className="p-1.5 text-red-600 hover:text-red-700 rounded-lg hover:bg-red-50">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p className="text-gray-600 mb-4">{idea.description}</p>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            <span
+                                className={`px-3 py-1 rounded-full text-sm ${
+                                    idea.priority === "High"
+                                        ? "bg-red-100 text-red-800"
+                                        : idea.priority === "Medium"
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-green-100 text-green-800"
+                                }`}>
+                                {idea.priority}
+                            </span>
+                            <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                {idea.category}
+                            </span>
+                        </div>
+                        <div className="text-sm text-gray-500">
+                            Created:{" "}
+                            {new Date(idea.createdAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Add Idea Modal */}
+            {showAddModal && (
+                <IdeaModal
+                    onClose={() => setShowAddModal(false)}
+                    onSubmit={async (formData) => {
+                        try {
+                            const token = localStorage.getItem("token");
+                            console.log("1");
+                            const newIdea = await axios.post(
+                                "http://localhost:5000/ideas/create",
+                                formData,
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                }
+                            );
+                            console.log("2");
+                            fetchIdeas();
+                            setShowAddModal(false);
+                            return res.json({
+                                success: true,
+                                newIdea,
+                            });
+                        } catch (err) {
+                            console.log(err);
+                        }
+                    }}
+                />
+            )}
+
+            {/* Edit Idea Modal */}
+            {showEditModal && selectedIdea && (
+                <IdeaModal
+                    idea={selectedIdea}
+                    onClose={() => {
+                        setShowEditModal(false);
+                        setSelectedIdea(null);
+                    }}
+                    onSubmit={async (formData) => {
+                        try {
+                            const token = localStorage.getItem("token");
+                            await axios.put(
+                                `http://localhost:5000/ideas/${selectedIdea._id}`,
+                                formData,
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                }
+                            );
+                            fetchIdeas();
+                            setShowEditModal(false);
+                            setSelectedIdea(null);
+                        } catch (err) {
+                            alert(
+                                err.response?.data?.message ||
+                                    "Failed to update idea"
+                            );
+                        }
+                    }}
+                />
+            )}
+        </div>
+    );
+};
+
+const IdeaModal = ({ idea, onClose, onSubmit }) => {
+    const [formData, setFormData] = useState({
+        title: idea?.title || "",
+        description: idea?.description || "",
+        category: idea?.category || "Technology",
+        priority: idea?.priority || "Medium",
+        status: idea?.status || "Draft",
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(formData);
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full">
+                <h3 className="text-xl font-semibold mb-4">
+                    {idea ? "Edit Idea" : "Add New Idea"}
+                </h3>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Title
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.title}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    title: e.target.value,
+                                })
+                            }
+                            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Description
+                        </label>
+                        <textarea
+                            value={formData.description}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    description: e.target.value,
+                                })
+                            }
+                            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent"
+                            rows="4"
+                            required
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Category
+                            </label>
+                            <select
+                                value={formData.category}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        category: e.target.value,
+                                    })
+                                }
+                                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent">
+                                {[
+                                    "Technology",
+                                    "Healthcare",
+                                    "Education",
+                                    "Finance",
+                                    "E-commerce",
+                                    "Social Impact",
+                                    "Environment",
+                                    "Other",
+                                ].map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Priority
+                            </label>
+                            <select
+                                value={formData.priority}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        priority: e.target.value,
+                                    })
+                                }
+                                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent">
+                                {["Low", "Medium", "High"].map((priority) => (
+                                    <option key={priority} value={priority}>
+                                        {priority}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="flex justify-end space-x-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-[#FFD60A] rounded-lg font-medium hover:bg-[#FFD60A]/90">
+                            {idea ? "Update Idea" : "Add Idea"}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
 
 function StartupPage() {
     const [selectedTab, setSelectedTab] = useState("Dashboard");

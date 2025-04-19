@@ -189,11 +189,14 @@ export const editPitch = async (req, res) => {
 
         const updateData = {};
 
+        console.log("1");
+
         if (founderName !== undefined) updateData.founderName = founderName;
         if (startupName !== undefined) updateData.startupName = startupName;
         if (tagline !== undefined) updateData.tagline = tagline;
         if (description !== undefined) updateData.description = description;
         if (sector !== undefined) updateData.sector = sector;
+        console.log("2");
         if (stage !== undefined) {
             if (
                 !["Idea", "Prototype", "Early Revenue", "Scaling"].includes(
@@ -462,7 +465,7 @@ export const getuserPitch = async (req, res) => {
             {
                 path: "createdBy",
                 select: "name email profileImage", // Only select needed fields
-            }
+            },
         ]);
 
         // Check if pitch exists

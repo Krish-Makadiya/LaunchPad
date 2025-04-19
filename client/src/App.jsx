@@ -17,6 +17,7 @@ const App = () => {
             <BrowserRouter>
             <Routes>
                 {/* Other routes */}
+                <Route path="/" element={<Homepage />} />
                 <Route path="/pitch/:id" element={<PitchDetails />} />
                 <Route path="/pitch/edit/:id" element={<EditPitchForm />} />
                 <Route path="/dashboard" element={<StartupPage />} />

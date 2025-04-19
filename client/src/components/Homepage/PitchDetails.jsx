@@ -14,10 +14,6 @@ export const PitchDetails = () => {
             try {
                 const token = localStorage.getItem("token");
 
-                // Debug logs
-                console.log("Pitch ID:", id);
-                console.log("Token:", token);
-
                 const response = await axios.get(
                     `http://localhost:5000/startup/pitch/${id}`, // Updated endpoint
                     {
@@ -26,9 +22,6 @@ export const PitchDetails = () => {
                         },
                     }
                 );
-
-                // Debug log
-                console.log("API Response:", response.data);
 
                 // Make sure we're setting the pitch data correctly
                 if (response.data.success) {
@@ -257,14 +250,14 @@ export const PitchDetails = () => {
                                             const token =
                                                 localStorage.getItem("token");
                                             await axios.delete(
-                                                `http://localhost:5000/api/pitches/${pitch._id}`,
+                                                `http://localhost:5000/startup/delete-pitch/${pitch._id}`,
                                                 {
                                                     headers: {
                                                         Authorization: `Bearer ${token}`,
                                                     },
                                                 }
                                             );
-                                            navigate("/startup/dashboard");
+                                            navigate("/dashboard");
                                         } catch (err) {
                                             alert("Failed to delete pitch");
                                         }
