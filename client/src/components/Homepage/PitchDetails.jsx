@@ -18,7 +18,7 @@ const FeedbackSection = ({ pitch }) => {
         try {
             const token = localStorage.getItem("token");
             const res = await axios.post(
-                `https://launch-pad-npps.vercel.app/feedback/create-feedback/${pitch._id}`,
+                `http://localhost:5000/feedback/create-feedback/${pitch._id}`,
                 {
                     content: feedback,
                 },
@@ -52,7 +52,7 @@ Keep your response concise and formal. End with a verdict: "Promising", "Needs W
 
             const token = localStorage.getItem("token");
             const res = await axios.get(
-                "https://launch-pad-npps.vercel.app/ai/generate-feedback",
+                "http://localhost:5000/ai/generate-feedback",
                 {
                     params: { prompt },
                     headers: {
@@ -117,6 +117,7 @@ export const PitchDetails = () => {
     const [feedback, setFeedback] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [role, setRole] = useState(localStorage.getItem("userRole"));
 
     const SocialLinks = ({ socialLinks }) => {
         if (!socialLinks) return null;
@@ -165,7 +166,7 @@ export const PitchDetails = () => {
                 const token = localStorage.getItem("token");
 
                 const response = await axios.get(
-                    `https://launch-pad-npps.vercel.app/startup/pitch/${id}`, // Updated endpoint
+                    `http://localhost:5000/startup/pitch/${id}`, // Updated endpoint
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -381,7 +382,12 @@ export const PitchDetails = () => {
                     </div>
                 </div>
 
-                <FeedbackSection pitch={pitch} />
+                {
+                    role === "investor" && (
+
+                            <FeedbackSection pitch={pitch} />
+                    )
+                }
             </div>
         </div>
     );

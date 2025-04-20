@@ -84,7 +84,7 @@ const PitchCard = ({ pitch }) => {
                         <div className="flex space-x-2">
                             <button
                                 onClick={() =>
-                                    (window.location.href = `/pitch/${updatedPitch._id}`)
+                                    (window.location.href = `/pitch/s/${updatedPitch._id}`)
                                 }
                                 className="px-4 py-2 bg-[#FFD60A] text-gray-900 rounded-lg hover:bg-[#FFD60A]/90 transition-colors duration-300">
                                 View Details
@@ -122,7 +122,7 @@ const PitchList = () => {
                 const token = localStorage.getItem("token");
 
                 const response = await axios.get(
-                    "https://launch-pad-npps.vercel.app/startup/get-user-pitches",
+                    "http://localhost:5000/startup/get-user-pitches",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

@@ -23,7 +23,7 @@ const Navbar = () => {
 
                 try {
                     const response = await axios.get(
-                        `https://launch-pad-npps.vercel.app/auth/check/${firebaseUser.uid}`,
+                        `http://localhost:5000/auth/check/${firebaseUser.uid}`,
                         {
                             headers: {
                                 Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ const Navbar = () => {
 
             try {
                 const response = await axios.get(
-                    `https://launch-pad-npps.vercel.app/auth/check/${userData.uid}`,
+                    `http://localhost:5000/auth/check/${userData.uid}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -80,11 +80,15 @@ const Navbar = () => {
                 );
 
                 if (response.data.exists) {
+                    if (response.data.role == "startup") {
+                        window.location.href = "/startup";
+                    } else if (response.data.role == "investor") {
+                        window.location.href = "/investor";
+                    }
                     updateRole(response.data.role);
                 } else {
                     setShowRoleDialog(true);
                 }
-                
             } catch (error) {
                 console.error("Error checking user:", error);
                 setShowRoleDialog(true);
@@ -97,7 +101,7 @@ const Navbar = () => {
     const handleRoleSelection = async (selectedRole) => {
         try {
             const response = await axios.post(
-                "https://launch-pad-npps.vercel.app/auth/verify-token",
+                "http://localhost:5000/auth/verify-token",
                 {
                     userRole: selectedRole,
                 },
@@ -121,6 +125,15 @@ const Navbar = () => {
         }
     };
 
+    const clickHandler = () => {
+        if (role === "startup") {
+            window.location.href = "/startup";
+        }
+        if (role === "investor") {
+            window.location.href = "/investor";
+        }
+    };
+
     return (
         <>
             <div className="w-[90%] mx-auto flex justify-between items-center py-2">
@@ -129,7 +142,7 @@ const Navbar = () => {
                 <div>
                     {user ? (
                         <div className="flex items-center gap-6">
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1 mr-10">
                                 <img
                                     src={user.photoURL}
                                     alt="Profile"
@@ -142,6 +155,7 @@ const Navbar = () => {
                                     </span>
                                 )}
                             </div>
+                            <button onClick={clickHandler}>Dashboard</button>
                             <button
                                 onClick={signoutHandler}
                                 className="bg-red-500 text-white px-4 py-2 rounded text-sm">

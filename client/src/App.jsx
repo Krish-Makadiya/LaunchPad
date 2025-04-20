@@ -22,8 +22,8 @@ const App = () => {
                 <Route path="/pitch/s/:id" element={<PitchDetails />} />
                 <Route path="/pitch/i/:id" element={<PitchDetails />} />
                 <Route path="/pitch/edit/:id" element={<EditPitchForm />} />
-                <Route path="/dashboard" element={<StartupPage />} />
-                <Route path="/inv" element={<InvestorPage/>} />
+                <Route path="/startup" element={<StartupPage />} />
+                <Route path="/investor" element={<InvestorPage/>} />
             </Routes>
         </BrowserRouter>
         </div>

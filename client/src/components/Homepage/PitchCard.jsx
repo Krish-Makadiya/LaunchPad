@@ -8,7 +8,7 @@ export const PitchCard = ({ pitch, onDelete }) => {
             try {
                 const token = localStorage.getItem("token");
                 await axios.delete(
-                    `https://launch-pad-npps.vercel.app/api/pitches/${pitch._id}`,
+                    `http://localhost:5000/api/pitches/${pitch._id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -27,7 +27,7 @@ export const PitchCard = ({ pitch, onDelete }) => {
             {/* Existing card content */}
             <div className="flex space-x-2">
                 <button
-                    onClick={() => navigate(`/pitch/${pitch._id}`)}
+                    onClick={() => navigate(`/pitch/s/${pitch._id}`)}
                     className="px-4 py-2 bg-[#FFD60A] text-gray-900 rounded-lg hover:bg-[#FFD60A]/90">
                     View Details
                 </button>

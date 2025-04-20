@@ -14,15 +14,7 @@ const app = express();
 dotenv.config();
 
 app.use(express.json());
-const corsOptions = {
-    origin: "https://launch-pad-beryl.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.use(cors());
 connectDB();
 
 app.use("/auth", userRoutes);
