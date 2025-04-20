@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 export const createIdea = async (req, res) => {
     try {
         const { title, description, category, priority } = req.body;
-        const userId = req.user.uid
+        const userId = req.user.uid;
 
         // Basic validation
         if (!title || !description || !category) {
@@ -46,9 +46,9 @@ export const getUserIdeas = async (req, res) => {
         console.log("Incoming user object:", req.user);
 
         // Get uid from req.user and convert to ObjectId
-        const userId = req.user.uid
+        const userId = req.user.uid;
 
-        const ideas = await Idea.find({createdBy: userId})
+        const ideas = await Idea.find({ createdBy: userId })
             .sort({ createdAt: -1 })
             .populate("createdBy", "name email");
 
