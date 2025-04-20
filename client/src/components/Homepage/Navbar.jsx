@@ -84,6 +84,7 @@ const Navbar = () => {
                 } else {
                     setShowRoleDialog(true);
                 }
+                
             } catch (error) {
                 console.error("Error checking user:", error);
                 setShowRoleDialog(true);

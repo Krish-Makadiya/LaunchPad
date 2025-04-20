@@ -35,6 +35,47 @@ const FeedbackSection = ({ pitch }) => {
         }
     };
 
+    const generateWithAI = async () => {
+        try {
+            const prompt = `
+
+You are a professional startup analyst. Review the following pitch and give a brief, formal analysis highlighting its potential and whether it is worth investor interest.
+
+- **Startup**: ${pitch.startupName}
+- **Tagline**: ${pitch.tagline}
+- **Sector & Stage**: ${pitch.sector} | ${pitch.stage}
+- **Ask**: ₹${pitch.askAmount} for ${pitch.askEquity}% equity (Valuation: ₹${pitch.companyValuation})
+- **Current Revenue**: ₹${pitch.revenue}
+
+Keep your response concise and formal. End with a verdict: "Promising", "Needs Work", or "Not Ready".
+`;
+
+            const token = localStorage.getItem("token");
+            const res = await axios.get(
+                "http://localhost:5000/ai/generate-feedback",
+                {
+                    params: { prompt },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const plainText = res.data
+                .replace(/#{1,6}\s/g, "") // Remove headers
+                .replace(/\*\*/g, "") // Remove bold markers
+                .replace(/\*/g, "") // Remove italic markers
+                .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Replace links with text
+                .replace(/\n\n/g, "\n") // Replace double line breaks
+                .replace(/^\s*[-*+]\s/gm, "") // Remove list markers
+                .trim();
+
+            setFeedback(plainText);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div className="bg-white rounded-lg p-6 mt-3 shadow-sm">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -47,7 +88,7 @@ const FeedbackSection = ({ pitch }) => {
                     placeholder="Share your thoughts about this pitch..."
                     className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD60A] focus:border-transparent outline-none resize-none"
                 />
-                <div className="mt-4 flex justify-end">
+                <div className="mt-4 flex justify-end gap-5">
                     <button
                         type="submit"
                         disabled={loading || !feedback.trim()}
@@ -57,6 +98,11 @@ const FeedbackSection = ({ pitch }) => {
                                 : ""
                         }`}>
                         {loading ? "Submitting..." : "Submit Feedback"}
+                    </button>
+                    <button
+                        onClick={generateWithAI}
+                        className={`px-6 py-2 bg-[#FFD60A] text-gray-900 rounded-lg hover:bg-[#FFD60A]/90 transition-colors`}>
+                        AI
                     </button>
                 </div>
             </form>
@@ -71,7 +117,6 @@ export const PitchDetails = () => {
     const [feedback, setFeedback] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
 
     const SocialLinks = ({ socialLinks }) => {
         if (!socialLinks) return null;

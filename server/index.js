@@ -8,6 +8,7 @@ import ratingRoutes from "./routes/rating.routes.js";
 import feedbackRoutes from "./routes/feedback.routes.js";
 import bookmarkRoutes from "./routes/bookmark.routes.js";
 import ideaRoutes from "./routes/idea.routes.js";
+import AiRoutes from "./routes/ai.routes.js";
 
 const app = express();
 dotenv.config();
@@ -22,6 +23,7 @@ app.use("/rating", ratingRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use("/bookmark", bookmarkRoutes);
 app.use("/ideas", ideaRoutes);
+app.use("/ai", AiRoutes);
 
 app.get("/", (req, res) => {
     res.send("Server is running");
