@@ -43,7 +43,7 @@ const CreatePitchForm = ({ onClose, isOpen }) => {
         try {
             const token = localStorage.getItem("token");
             await axios.post(
-                "launch-pad-xvna.vercel.app/startup/create-pitch",
+                "https://launch-pad-npps.vercel.app//startup/create-pitch",
                 formData,
                 {
                     headers: {

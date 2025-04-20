@@ -47,7 +47,7 @@ export const EditPitchForm = ({ pitch, onClose, onUpdate }) => {
 
             const response = await axios.put(
                 // Add /api prefix to match backend route
-                `launch-pad-xvna.vercel.app/startup/edit-pitch/${pitch._id}`,
+                `https://launch-pad-npps.vercel.app//startup/edit-pitch/${pitch._id}`,
                 formData,
                 {
                     headers: {
