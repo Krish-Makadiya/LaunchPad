@@ -34,7 +34,7 @@ const Dashboard = ({ loading, totalPitches, error }) => {
         try {
             const token = localStorage.getItem("token");
             const result = await axios.get(
-                `https://launch-pad-npps.vercel.app//startup/pitches`,
+                `https://launch-pad-npps.vercel.app/startup/pitches`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -281,10 +281,10 @@ const Explore = () => {
 
             // Fetch pitches and bookmarks in parallel
             const [pitchResponse, bookmarkResponse] = await Promise.all([
-                axios.get("https://launch-pad-npps.vercel.app//startup/pitches", {
+                axios.get("https://launch-pad-npps.vercel.app/startup/pitches", {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                axios.get("https://launch-pad-npps.vercel.app//bookmark/get-user-bookmarks", {
+                axios.get("https://launch-pad-npps.vercel.app/bookmark/get-user-bookmarks", {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ]);
@@ -323,7 +323,7 @@ const Explore = () => {
             if (isBookmarked) {
                 // Remove bookmark
                 await axios.delete(
-                    `https://launch-pad-npps.vercel.app//bookmark/remove-bookmark/${pitchId}`,
+                    `https://launch-pad-npps.vercel.app/bookmark/remove-bookmark/${pitchId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -333,7 +333,7 @@ const Explore = () => {
             } else {
                 // Add bookmark
                 await axios.post(
-                    `https://launch-pad-npps.vercel.app//bookmark/create-bookmark/${pitchId}`,
+                    `https://launch-pad-npps.vercel.app/bookmark/create-bookmark/${pitchId}`,
                     {},
                     {
                         headers: {
@@ -563,7 +563,7 @@ const Messages = () => {
         try {
             const token = localStorage.getItem("token");
             const result = await axios.get(
-                "https://launch-pad-npps.vercel.app//feedback/get-user-feedback",
+                "https://launch-pad-npps.vercel.app/feedback/get-user-feedback",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -585,7 +585,7 @@ const Messages = () => {
         try {
             const token = localStorage.getItem("token");
             const result = await axios.delete(
-                `https://launch-pad-npps.vercel.app//feedback/delete-feedback/${feedbackId}`,
+                `https://launch-pad-npps.vercel.app/feedback/delete-feedback/${feedbackId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -768,7 +768,7 @@ const Bookmarks = () => {
             try {
                 const token = localStorage.getItem("token");
                 const result = await axios.get(
-                    "https://launch-pad-npps.vercel.app//bookmark/get-user-bookmarks",
+                    "https://launch-pad-npps.vercel.app/bookmark/get-user-bookmarks",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -790,7 +790,7 @@ const Bookmarks = () => {
         try {
             if (isBookmarked) {
                 await axios.post(
-                    "https://launch-pad-npps.vercel.app//bookmark/add-bookmark",
+                    "https://launch-pad-npps.vercel.app/bookmark/add-bookmark",
                     { pitchId },
                     {
                         headers: {
@@ -800,7 +800,7 @@ const Bookmarks = () => {
                 );
             } else {
                 await axios.delete(
-                    `https://launch-pad-npps.vercel.app//bookmark/remove-bookmark/${pitchId}`,
+                    `https://launch-pad-npps.vercel.app/bookmark/remove-bookmark/${pitchId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -953,7 +953,7 @@ const MyProfile = () => {
             setLoading(true);
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                "https://launch-pad-npps.vercel.app//auth/profile",
+                "https://launch-pad-npps.vercel.app/auth/profile",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -1082,7 +1082,7 @@ const Ideas = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                "https://launch-pad-npps.vercel.app//ideas/all",
+                "https://launch-pad-npps.vercel.app/ideas/all",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -1102,7 +1102,7 @@ const Ideas = () => {
         if (window.confirm("Are you sure you want to delete this idea?")) {
             try {
                 const token = localStorage.getItem("token");
-                await axios.delete(`https://launch-pad-npps.vercel.app//ideas/${ideaId}`, {
+                await axios.delete(`https://launch-pad-npps.vercel.app/ideas/${ideaId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -1241,7 +1241,7 @@ const Ideas = () => {
                             const token = localStorage.getItem("token");
                             console.log("1");
                             const newIdea = await axios.post(
-                                "https://launch-pad-npps.vercel.app//ideas/create",
+                                "https://launch-pad-npps.vercel.app/ideas/create",
                                 formData,
                                 {
                                     headers: {
@@ -1275,7 +1275,7 @@ const Ideas = () => {
                         try {
                             const token = localStorage.getItem("token");
                             await axios.put(
-                                `https://launch-pad-npps.vercel.app//ideas/${selectedIdea._id}`,
+                                `https://launch-pad-npps.vercel.app/ideas/${selectedIdea._id}`,
                                 formData,
                                 {
                                     headers: {
@@ -1460,7 +1460,7 @@ function InvestorPage() {
                 }
 
                 const response = await axios.get(
-                    "https://launch-pad-npps.vercel.app//startup/pitches",
+                    "https://launch-pad-npps.vercel.app/startup/pitches",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

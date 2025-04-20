@@ -119,7 +119,7 @@ const Dashboard = ({ loading, totalPitches, error }) => {
         try {
             const token = localStorage.getItem("token");
             const result = await axios.get(
-                `https://launch-pad-npps.vercel.app//startup/pitches`,
+                `https://launch-pad-npps.vercel.app/startup/pitches`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -314,7 +314,7 @@ const Messages = () => {
         try {
             const token = localStorage.getItem("token");
             const result = await axios.get(
-                "https://launch-pad-npps.vercel.app//feedback/get-startup-feedback",
+                "https://launch-pad-npps.vercel.app/feedback/get-startup-feedback",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -336,7 +336,7 @@ const Messages = () => {
         try {
             const token = localStorage.getItem("token");
             const result = await axios.delete(
-                `https://launch-pad-npps.vercel.app//feedback/delete-feedback/${feedbackId}`,
+                `https://launch-pad-npps.vercel.app/feedback/delete-feedback/${feedbackId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -619,7 +619,7 @@ const Investors = () => {
             setLoading(true);
             const token = localStorage.getItem("token");
             const result = await axios.get(
-                "https://launch-pad-npps.vercel.app//auth/get-intrested-investors",
+                "https://launch-pad-npps.vercel.app/auth/get-intrested-investors",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -790,7 +790,7 @@ const Ideas = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                "https://launch-pad-npps.vercel.app//ideas/all",
+                "https://launch-pad-npps.vercel.app/ideas/all",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -810,7 +810,7 @@ const Ideas = () => {
         if (window.confirm("Are you sure you want to delete this idea?")) {
             try {
                 const token = localStorage.getItem("token");
-                await axios.delete(`https://launch-pad-npps.vercel.app//ideas/${ideaId}`, {
+                await axios.delete(`https://launch-pad-npps.vercel.app/ideas/${ideaId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -949,7 +949,7 @@ const Ideas = () => {
                             const token = localStorage.getItem("token");
                             console.log("1");
                             const newIdea = await axios.post(
-                                "https://launch-pad-npps.vercel.app//ideas/create",
+                                "https://launch-pad-npps.vercel.app/ideas/create",
                                 formData,
                                 {
                                     headers: {
@@ -983,7 +983,7 @@ const Ideas = () => {
                         try {
                             const token = localStorage.getItem("token");
                             await axios.put(
-                                `https://launch-pad-npps.vercel.app//ideas/${selectedIdea._id}`,
+                                `https://launch-pad-npps.vercel.app/ideas/${selectedIdea._id}`,
                                 formData,
                                 {
                                     headers: {
@@ -1148,7 +1148,7 @@ const MyProfile = () => {
             setLoading(true);
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                "https://launch-pad-npps.vercel.app//auth/profile",
+                "https://launch-pad-npps.vercel.app/auth/profile",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -1296,7 +1296,7 @@ function StartupPage() {
                 }
 
                 const pitches = await axios.get(
-                    "https://launch-pad-npps.vercel.app//startup/get-user-pitches",
+                    "https://launch-pad-npps.vercel.app/startup/get-user-pitches",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -1307,7 +1307,7 @@ function StartupPage() {
                 setTotalPitches(pitches.data.count);
 
                 // const bookmarks = await axios.get(
-                //     "https://launch-pad-npps.vercel.app//bookmark/get-user-bookmark-stats",
+                //     "https://launch-pad-npps.vercel.app/bookmark/get-user-bookmark-stats",
                 //     {
                 //         headers: {
                 //             Authorization: `Bearer ${token}`,
@@ -1318,7 +1318,7 @@ function StartupPage() {
                 // setTotalBookmarks(bookmarks.data.count);
 
                 // const feedbacks = await axios.get(
-                //     "https://launch-pad-npps.vercel.app//bookmark/get-user-bookmark-stats",
+                //     "https://launch-pad-npps.vercel.app/bookmark/get-user-bookmark-stats",
                 //     {
                 //         headers: {
                 //             Authorization: `Bearer ${token}`,

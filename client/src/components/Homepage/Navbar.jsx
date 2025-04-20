@@ -23,7 +23,7 @@ const Navbar = () => {
 
                 try {
                     const response = await axios.get(
-                        `https://launch-pad-npps.vercel.app//auth/check/${firebaseUser.uid}`,
+                        `https://launch-pad-npps.vercel.app/auth/check/${firebaseUser.uid}`,
                         {
                             headers: {
                                 Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ const Navbar = () => {
 
             try {
                 const response = await axios.get(
-                    `https://launch-pad-npps.vercel.app//auth/check/${userData.uid}`,
+                    `https://launch-pad-npps.vercel.app/auth/check/${userData.uid}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -97,7 +97,7 @@ const Navbar = () => {
     const handleRoleSelection = async (selectedRole) => {
         try {
             const response = await axios.post(
-                "https://launch-pad-npps.vercel.app//auth/verify-token",
+                "https://launch-pad-npps.vercel.app/auth/verify-token",
                 {
                     userRole: selectedRole,
                 },
