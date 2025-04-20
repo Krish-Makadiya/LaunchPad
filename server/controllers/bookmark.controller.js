@@ -151,7 +151,6 @@ export const removeBookmark = async (req, res) => {
     }
 };
 
-// Get user's bookmarks
 export const getUserBookmarks = async (req, res) => {
     try {
         const userId = req.user.uid;
@@ -198,12 +197,12 @@ export const getUserBookmarks = async (req, res) => {
 
 export const getBookmarkStats = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.uid;
 
-        // 1. Get all pitches created by the user
-        const userPitches = await Pitch.find({ userId: userId }).select('_id');
+        const user = await User.findOne({firebaseUID: userId});
 
-        // If user has no pitches, return 0
+        const userPitches = await Pitch.find({ createdBy: user._id }).select('_id');
+
         if (!userPitches.length) {
             return res.status(200).json({
                 success: true,
@@ -212,13 +211,13 @@ export const getBookmarkStats = async (req, res) => {
             });
         }
 
-        // 2. Get pitch IDs
         const pitchIds = userPitches.map(pitch => pitch._id);
+        console.log(pitchIds);
 
-        // 3. Count total bookmarks for all user's pitches combined
         const totalBookmarks = await Bookmark.countDocuments({
             pitchId: { $in: pitchIds }
         });
+        console.log(totalBookmarks);
 
         return res.status(200).json({
             success: true,
@@ -320,4 +319,22 @@ export const getPitchBookmarkStats = async (req, res) => {
         });
     }
 };
+
+export const getTotalBookmarks = async (req, res) => {
+    try {
+        const totalBookmarks = await Bookmark.countDocuments();
+
+        return res.status(200).json({
+            success: true,
+            totalBookmarks
+        });
+    } catch (error) {
+        console.error('Error in getTotalBookmarks:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error fetching total bookmarks',
+            error: error.message
+        });
+    }
+}
 

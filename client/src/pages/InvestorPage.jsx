@@ -594,10 +594,10 @@ const Messages = () => {
             );
             
             // Update the pitches state to remove the deleted pitch
-            setPitches(prevPitches => prevPitches.filter(pitch => pitch._id !== feedbackId));
+            setFeedbacks(prevPitches => prevPitches.filter(pitch => pitch._id !== feedbackId));
             
             // Show success message
-            toast.success("Pitch deleted successfully");
+            toast.success("Feebback deleted successfully");
         } catch (err) {
             console.log(err);
             toast.error("Failed to delete pitch");
@@ -605,10 +605,8 @@ const Messages = () => {
     };
 
     return (
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                Feedback
-            </h3>
+        <div className="p-8">
+        <h2 className="text-2xl font-bold mb-6">Feedbacks</h2>
             <div className="space-y-6">
                 {feedbacks.map((feedback) => (
                     <div
@@ -851,20 +849,20 @@ const Bookmarks = () => {
                 <div className="space-y-4">
                     {bookmarks.map(({ pitch, bookmarkedAt }) => (
                         <div
-                            key={pitch._id}
+                            key={pitch?._id}
                             className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
                             <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                     <div className="flex items-center space-x-3">
                                         <h3 className="text-xl font-semibold text-gray-900">
-                                            {pitch.startupName}
+                                            {pitch?.startupName}
                                         </h3>
                                         <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
-                                            {pitch.sector}
+                                            {pitch?.sector}
                                         </span>
                                     </div>
                                     <p className="mt-1 text-gray-600">
-                                        {pitch.tagline}
+                                        {pitch?.tagline}
                                     </p>
                                 </div>
                                 <button
@@ -895,7 +893,7 @@ const Bookmarks = () => {
                                         Ask Amount
                                     </p>
                                     <p className="text-lg font-semibold text-gray-900">
-                                        ₹{pitch.askAmount.toLocaleString()}
+                                        ₹{pitch?.askAmount?.toLocaleString()}
                                     </p>
                                 </div>
                                 <div className="bg-gray-50 p-3 rounded-lg">
@@ -903,7 +901,7 @@ const Bookmarks = () => {
                                         Equity
                                     </p>
                                     <p className="text-lg font-semibold text-gray-900">
-                                        {pitch.askEquity}%
+                                        {pitch?.askEquity}%
                                     </p>
                                 </div>
                                 <div className="bg-gray-50 p-3 rounded-lg">
@@ -911,7 +909,7 @@ const Bookmarks = () => {
                                         Stage
                                     </p>
                                     <p className="text-lg font-semibold text-gray-900">
-                                        {pitch.stage}
+                                        {pitch?.stage}
                                     </p>
                                 </div>
                             </div>
@@ -938,8 +936,6 @@ const Bookmarks = () => {
         </div>
     );
 };
-
-// client/src/pages/StartupPage.jsx
 
 const MyProfile = () => {
     const [profile, setProfile] = useState(null);
@@ -1489,7 +1485,6 @@ function InvestorPage() {
         fetchTotalPitches();
     }, []);
 
-    // Helper function to add ordinal suffix (1st, 2nd, 3rd, etc.)
     const getOrdinalSuffix = (day) => {
         if (day > 3 && day < 21) return "th";
         switch (day % 10) {

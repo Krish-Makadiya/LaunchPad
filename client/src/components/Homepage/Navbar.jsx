@@ -63,7 +63,8 @@ const Navbar = () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const userData = result.user;
-            const token = await userData.getIdToken();
+            const token =
+                localStorage.getItem("token") || (await userData.getIdToken());
 
             updateUser(userData);
             updateToken(token);

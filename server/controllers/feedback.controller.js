@@ -219,3 +219,73 @@ export const getUserFeedback = async (req, res) => {
         });
     }
 };
+
+
+export const getStartupFeedback = async (req, res) => {
+    try {
+        const userId = req.user.uid;
+
+        const user = await User.findOne({ firebaseUID: userId });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        // Check if user is a startup
+        if (user.role !== "startup") {
+            return res.status(403).json({
+                success: false,
+                message: "Only startups can view feedback on their pitches"
+            });
+        }
+
+        // Find all pitches created by the user
+        const userPitches = await Pitch.find({ createdBy: user._id });
+        
+        if (!userPitches.length) {
+            return res.status(200).json({
+                success: true,
+                message: "No pitches found for this startup",
+                data: {
+                    count: 0,
+                    feedback: []
+                }
+            });
+        }
+
+        // Get all pitch IDs
+        const pitchIds = userPitches.map(pitch => pitch._id);
+
+        // Find all feedback for these pitches
+        const feedback = await Feedback.find({ pitch: { $in: pitchIds } })
+            .populate({
+                path: 'investor',
+                select: 'name email profileImage '
+            })
+            .populate({
+                path: 'pitch',
+                select: 'founderName startupName tagline stage location askAmount askEquity companyValuation founderEmail teamSze founderProfileImage'
+            })
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            message: "Startup feedback retrieved successfully",
+            data: {
+                count: feedback.length,
+                pitchCount: userPitches.length,
+                feedback
+            }
+        });
+
+    } catch (error) {
+        console.error("Error fetching feedback:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching feedback",
+            error: error.message
+        });
+    }
+};

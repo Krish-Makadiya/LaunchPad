@@ -22,6 +22,24 @@ const UserSchema = new Schema({
         enum: ["startup", "investor"],
         required: true,
     },
+    socialLinks: {
+        linkedin: {
+            type: String,
+            default: "https://www.youtube.com"
+        },
+        twitter: {
+            type: String,
+            default: ""
+        },
+        website: {
+            type: String,
+            default: ""
+        },
+        github: {
+            type: String,
+            default: ""
+        }
+    },
 }, { timestamps: true });
 
 const User = mongoose.model("User", UserSchema);
