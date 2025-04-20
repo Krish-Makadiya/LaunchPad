@@ -18,7 +18,7 @@ const FeedbackSection = ({ pitch }) => {
         try {
             const token = localStorage.getItem("token");
             const res = await axios.post(
-                `http://localhost:5000/feedback/create-feedback/${pitch._id}`,
+                `launch-pad-xvna.vercel.app/feedback/create-feedback/${pitch._id}`,
                 {
                     content: feedback,
                 },
@@ -52,7 +52,7 @@ Keep your response concise and formal. End with a verdict: "Promising", "Needs W
 
             const token = localStorage.getItem("token");
             const res = await axios.get(
-                "http://localhost:5000/ai/generate-feedback",
+                "launch-pad-xvna.vercel.app/ai/generate-feedback",
                 {
                     params: { prompt },
                     headers: {
@@ -165,7 +165,7 @@ export const PitchDetails = () => {
                 const token = localStorage.getItem("token");
 
                 const response = await axios.get(
-                    `http://localhost:5000/startup/pitch/${id}`, // Updated endpoint
+                    `launch-pad-xvna.vercel.app/startup/pitch/${id}`, // Updated endpoint
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

@@ -122,7 +122,7 @@ const PitchList = () => {
                 const token = localStorage.getItem("token");
 
                 const response = await axios.get(
-                    "http://localhost:5000/startup/get-user-pitches",
+                    "launch-pad-xvna.vercel.app/startup/get-user-pitches",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

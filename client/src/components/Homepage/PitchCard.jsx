@@ -8,7 +8,7 @@ export const PitchCard = ({ pitch, onDelete }) => {
             try {
                 const token = localStorage.getItem("token");
                 await axios.delete(
-                    `http://localhost:5000/api/pitches/${pitch._id}`,
+                    `launch-pad-xvna.vercel.app/api/pitches/${pitch._id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

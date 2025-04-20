@@ -23,7 +23,7 @@ const Navbar = () => {
 
                 try {
                     const response = await axios.get(
-                        `http://localhost:5000/auth/check/${firebaseUser.uid}`,
+                        `launch-pad-xvna.vercel.app/auth/check/${firebaseUser.uid}`,
                         {
                             headers: {
                                 Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ const Navbar = () => {
 
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/auth/check/${userData.uid}`,
+                    `launch-pad-xvna.vercel.app/auth/check/${userData.uid}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -97,7 +97,7 @@ const Navbar = () => {
     const handleRoleSelection = async (selectedRole) => {
         try {
             const response = await axios.post(
-                "http://localhost:5000/auth/verify-token",
+                "launch-pad-xvna.vercel.app/auth/verify-token",
                 {
                     userRole: selectedRole,
                 },
